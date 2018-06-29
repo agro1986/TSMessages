@@ -177,16 +177,8 @@ static NSMutableDictionary *_notificationDesign;
 
 - (CGFloat)padding
 {
-    CGFloat iphoneXPadding = 0.0f;
-    if(@available(iOS 11.0, *)) {
-        UIWindow *window = UIApplication.sharedApplication.keyWindow;
-        if(window != nil){
-            iphoneXPadding = window.safeAreaInsets.top;
-        }
-    }
-    
     // Adds 10 padding to to cover navigation bar
-    return iphoneXPadding + (self.messagePosition == TSMessageNotificationPositionNavBarOverlay ? TSMessageViewMinimumPadding + 10.0f : TSMessageViewMinimumPadding);
+    return self.messagePosition == TSMessageNotificationPositionNavBarOverlay ? TSMessageViewMinimumPadding + 10.0f : TSMessageViewMinimumPadding;
 }
 
 - (id)initWithTitle:(NSString *)title
@@ -555,7 +547,16 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
     }
 
     self.backgroundImageView.frame = backgroundFrame;
-    self.backgroundBlurView.frame = backgroundFrame;
+    
+    CGFloat iphoneXPadding = 0.0;
+    if(@available(iOS 11.0, *)) {
+        UIWindow *window = UIApplication.sharedApplication.keyWindow;
+        if(window != nil){
+            iphoneXPadding = window.safeAreaInsets.top;
+        }
+    }
+    
+    self.backgroundBlurView.frame = CGRectMake(backgroundFrame.origin.x, backgroundFrame.origin.y - iphoneXPadding, backgroundFrame.size.width, backgroundFrame.size.height + iphoneXPadding);
 
     return currentHeight;
 }
