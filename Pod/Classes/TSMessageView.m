@@ -177,8 +177,16 @@ static NSMutableDictionary *_notificationDesign;
 
 - (CGFloat)padding
 {
+    CGFloat iphoneXPadding = 0.0f;
+    if(@available(iOS 11.0, *)) {
+        UIWindow *window = UIApplication.sharedApplication.keyWindow;
+        if(window != nil){
+            iphoneXPadding = window.safeAreaInsets.top;
+        }
+    }
+    
     // Adds 10 padding to to cover navigation bar
-    return self.messagePosition == TSMessageNotificationPositionNavBarOverlay ? TSMessageViewMinimumPadding + 10.0f : TSMessageViewMinimumPadding;
+    return iphoneXPadding + (self.messagePosition == TSMessageNotificationPositionNavBarOverlay ? TSMessageViewMinimumPadding + 10.0f : TSMessageViewMinimumPadding);
 }
 
 - (id)initWithTitle:(NSString *)title
